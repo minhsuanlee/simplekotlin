@@ -3,14 +3,83 @@
 println("UW Homework: Simple Kotlin")
 
 // write a "whenFn" that takes an arg of type "Any" and returns a String
+fun whenFn(arg: Any): String {
+    return when(arg) {
+        "Hello" -> "world"
+        is String -> "Say what?"
+        0 -> "zero"
+        1 -> "one"
+        in 2..10 -> "low number"
+        !is Double -> "a number"
+        else -> "I don't understand"
+    }
+}
 
 // write an "add" function that takes two Ints, returns an Int, and adds the values
+fun add(n1: Int, n2: Int): Int {
+    return n1 + n2
+}
+
 // write a "sub" function that takes two Ints, returns an Int, and subtracts the values
-// write a "mathOp" function that takes two Ints and a function (that takes two Ints and returns an Int), returns an Int, and applies the passed-in-function to the arguments
+fun sub(n1: Int, n2: Int): Int {
+    return n1 - n2
+}
+
+// write a "mathOp" function that takes two Ints and a function (that takes two Ints and
+// returns an Int), returns an Int, and applies the passed-in-function to the arguments
+fun mathOp(n1: Int, n2: Int, passFun: (n3: Int, n4: Int) -> Int): Int {
+    return passFun(n1, n2)
+}
 
 // write a class "Person" with first name, last name and age
+class Person(val _firstName: String, val _lastName: String, var _age: Int) {
+    val firstName: String = _firstName
+    val lastName: String = _lastName
+    var age: Int = _age
+        get() = field
+        set(value) { field = value }
+    val debugString: String
+        get() = "[Person firstName:${firstName} lastName:${lastName} age:${age}]"
+
+    fun equals(other: Person) { this == other }
+
+    override fun hashCode(): Int {
+        return firstName.hashCode() + lastName.hashCode() + age * 31
+    }
+}
 
 // write a class "Money"
+class Money(var amount: Int, val currency: String) {
+    init {
+        val currencyTypes = arrayOf("USD", "EUR", "CAN", "GBP")
+        if (currency !in currencyTypes || amount < 0) {
+            throw IllegalArgumentException()
+        }
+    }
+
+    fun convert(typeTo: String): Money {
+        val newUSD = when(this.currency) {
+            "GBP" -> this.amount / 5 * 10
+            "EUR" -> this.amount / 15 * 10
+            "CAN" -> this.amount / 15 * 12
+            else -> this.amount
+        }
+
+        val converted = when(typeTo) {
+            "GBP" -> newUSD / 10 * 5
+            "EUR" -> newUSD / 10 * 15
+            "CAN" -> newUSD / 12 * 15
+            else -> newUSD
+        }
+
+        return Money(converted.toInt(), typeTo)
+    }
+
+    operator fun plus(other: Money): Money {
+        val converted = other.convert(this.currency)
+        return Money(this.amount + converted.amount, currency)
+    }
+}
 
 // ============ DO NOT EDIT BELOW THIS LINE =============
 
